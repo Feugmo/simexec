@@ -1,0 +1,64 @@
+# Install pre-commit hooks via
+# pre-commit install
+
+exclude: >
+    (?x)^(
+      utils/potentials/*
+      utils/potentials/.*|
+      lammps-excutor/tests/*.meam
+      lammps-excutor/tests/*.alloy
+    )$
+repos:
+
+  - repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    - id: check-json
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.7.0
+    hooks:
+      - id: isort
+        args: [ --recursive ]
+        additional_dependencies: [ toml ]
+        exclude: ^.*/?setup\.py$
+
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+    - id: black
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3
+    hooks:
+    - id: flake8
+       additional_dependencies['flake8-bugbear==20.1.4','flake8-builtins==1.5.3', 
+            'flake8-comprehensions==3.2.3', 'flake8-typing-imports==1.7.0']
+       - args: [--max-line-length=120]
+      exclude: >
+        (?x)^(
+          lammps-excutor/tests/test_Cu.py
+         lammps-excutor/tests/test_Ni.py
+        )$
+
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.7.4
+    hooks:
+    -   id: pyupgrade
+        args: [--py36-plus]
+  -
+  - repo: local
+    hooks:
+      - &pytest-check
+        id: pytest-check
+        name: pytest-check
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+
+
+    # TODO could also add check-manifest

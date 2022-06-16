@@ -19,6 +19,7 @@ Installation
 
     + osx / linux / bashonwindows install instructions
         .. sourcecode:: bash
+
             recommended
             $ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
 
@@ -27,6 +28,7 @@ Installation
 
     + windows powershell install instructions
         .. sourcecode:: bash
+
             recommended
             $ (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -
 
@@ -107,22 +109,11 @@ other possibility
         poetry env info
 
 
-        Virtualenv
-        Python:         3.x.x
-        Implementation: CPython
-        Path:           "/path/to/cache/poetry virtual environment"
-        Valid:          True
-
-        System
-        Platform: linux
-        OS:       posix
-        Python:   /home/ctetsass/anaconda3
-
 + Activate Virtual Environment
 
 .. sourcecode:: bash
 
-    $lammps-executor poetry shell
+    $poetry shell
 
 Usage
 -------------------------

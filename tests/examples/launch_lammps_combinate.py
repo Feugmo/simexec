@@ -1,10 +1,10 @@
 # This calculation requires also phonopy plugin to work
 
+import numpy as np
 from aiida.common.extendeddicts import AttributeDict
 from aiida.engine import run_get_node
 from aiida.orm import Code, Dict, StructureData
 from aiida.plugins import CalculationFactory
-import numpy as np
 
 if __name__ == "__main__":
 
@@ -37,9 +37,7 @@ if __name__ == "__main__":
     positions = np.dot(scaled_positions, cell)
 
     for i, scaled_position in enumerate(scaled_positions):
-        structure.append_atom(
-            position=np.dot(scaled_position, cell).tolist(), symbols=symbols[i]
-        )
+        structure.append_atom(position=np.dot(scaled_position, cell).tolist(), symbols=symbols[i])
 
     structure.store()
 
@@ -60,9 +58,7 @@ if __name__ == "__main__":
 
     from aiida.orm import load_node
 
-    force_constants = load_node(
-        38
-    )  # Loads node that contains the harmonic force constants (Array data)
+    force_constants = load_node(38)  # Loads node that contains the harmonic force constants (Array data)
 
     machine = {"num_machines": 1, "parallel_env": "mpi*", "tot_num_mpiprocs": 16}
 

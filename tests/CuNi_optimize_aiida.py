@@ -1,16 +1,14 @@
+import matplotlib.pyplot as plt
+import numpy as np
 from aiida.common.extendeddicts import AttributeDict
-from aiida.engine import run_get_node
+from aiida.engine import run_get_node, submit
 from aiida.orm import Code, Dict, StructureData
 from aiida.plugins import CalculationFactory
-from aiida.engine import submit
-import numpy as np
+from aiida_lammps.data.potential import EmpiricalPotential
 from ase.build import bulk
-import matplotlib.pyplot as plt
 from clusterx.parent_lattice import ParentLattice
 from clusterx.structures_set import StructuresSet
 from clusterx.super_cell import SuperCell
-
-from aiida_lammps.data.potential import EmpiricalPotential
 
 if __name__ == "__main__":
 
@@ -24,8 +22,8 @@ if __name__ == "__main__":
     #  Define input parameters #
     ############################
 
-    pri1 = bulk('Ni', 'fcc', cubic=False)
-    sub1 = bulk('Cu', 'fcc', cubic=False)
+    pri1 = bulk("Ni", "fcc", cubic=False)
+    sub1 = bulk("Cu", "fcc", cubic=False)
 
     size = [4, 4, 4]
     nstruc = 1
@@ -58,9 +56,7 @@ if __name__ == "__main__":
     structure = StructureData(cell=cell)
 
     for i, position in enumerate(positions):
-        structure.append_atom(
-            position=position.tolist(), symbols=symbols[i]
-        )
+        structure.append_atom(position=position.tolist(), symbols=symbols[i])
 
     structure.store()
 
@@ -108,9 +104,7 @@ if __name__ == "__main__":
 
     # setup nodes
     inputs.structure = structure
-    inputs.potential = EmpiricalPotential(
-        type=potential["pair_style"], data=potential["data"]
-    )
+    inputs.potential = EmpiricalPotential(type=potential["pair_style"], data=potential["data"])
 
     print(inputs.potential.get_potential_file())
     print(inputs.potential.atom_style)
@@ -125,4 +119,3 @@ if __name__ == "__main__":
 
     # submit to deamon
     submit(LammpsOptimizeCalculation, **inputs)
-

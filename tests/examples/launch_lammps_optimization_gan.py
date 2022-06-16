@@ -1,9 +1,8 @@
+import numpy as np
 from aiida.common.extendeddicts import AttributeDict
 from aiida.engine import run_get_node
 from aiida.orm import Code, Dict, StructureData
 from aiida.plugins import CalculationFactory
-import numpy as np
-
 from aiida_lammps.data.potential import EmpiricalPotential
 
 if __name__ == "__main__":
@@ -38,9 +37,7 @@ if __name__ == "__main__":
     positions = np.dot(scaled_positions, cell)
 
     for i, scaled_position in enumerate(scaled_positions):
-        structure.append_atom(
-            position=np.dot(scaled_position, cell).tolist(), symbols=symbols[i]
-        )
+        structure.append_atom(position=np.dot(scaled_position, cell).tolist(), symbols=symbols[i])
 
     structure.store()
 
@@ -101,9 +98,7 @@ if __name__ == "__main__":
 
     # setup nodes
     inputs.structure = structure
-    inputs.potential = EmpiricalPotential(
-        type=potential["pair_style"], data=potential["data"]
-    )
+    inputs.potential = EmpiricalPotential(type=potential["pair_style"], data=potential["data"])
 
     inputs.parameters = Dict(dict=parameters_opt)
 

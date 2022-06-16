@@ -54,43 +54,41 @@ other possibility
         - to install install dependencies to current python interpreter/virtualenv
         .. sourcecode:: bash
 
-            $lammps-executor poetry config virtualenvs.create false --local
+            $poetry config virtualenvs.create false --local
 
         - create virtual environment in default location
         .. sourcecode:: bash
 
-            $lammps-executor poetry config virtualenvs.create
+            $poetry config virtualenvs.create
 
         -   create virtual environment in th root directory of a Python project
         .. sourcecode:: bash
 
-            $lammps-executor poetry config virtualenvs.in-project true
+            $poetry config virtualenvs.in-project true
 
 
 
         -   To change or otherwise add a new configuration setting,
         .. sourcecode:: bash
 
-            $lammps-executor poetry config virtualenvs.path /path/to/cache/directory/virtualenvs
+            $poetry config virtualenvs.path /path/to/cache/directory/virtualenvs
 
 
 - install the packages
 .. sourcecode:: bash
 
-    $lammps-executor poetry install
-
-    $lammps-executor poetry check
-
-    $lammps-executor poetry run pytest
-
-    $lammps-executor poetry build
+    $poetry install
+    $poetry check
+    $pre-commit install
+    $poetry run pytest
+    $poetry build
 
 
 + Listing the current configuration
 
     .. sourcecode:: bash
 
-        $lammps-executor poetry config --list
+        $poetry config --list
 
 
     which will give you something similar to this
@@ -136,6 +134,28 @@ Developing and Contributing
 See contributing.md
 for guidelines on running tests, adding features, coding style, and updating
 documentation when developing in or contributing to lammps-executor
+
++ Install pre-commit
+
+.. sourcecode:: bash
+
+    $
+
++ Add a pre-commit configuration
+
+.. sourcecode:: bash
+
+    $
+
++ Install the git hook scripts
+
+.. sourcecode:: bash
+
+    $pre-commit install
+
+
+
+
 
 
 Authors

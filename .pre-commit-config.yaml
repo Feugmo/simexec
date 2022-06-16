@@ -3,9 +3,12 @@
 
 exclude: >
     (?x)^(
+      cellconfig.json
       utils/potentials/.*|
       tests/.*meam
       tests/.*alloy
+      lammps_executor/__pycache__/
+      tests/__pycache__/
     )$
 fail_fast: false
 

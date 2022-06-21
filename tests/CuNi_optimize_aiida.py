@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     load_profile()
 
-    codename = "lammps_optimize_graham@graham"
+    codename = "Lammps-optmize@localhost"
 
     ############################
     #  Define input parameters #
@@ -106,9 +106,9 @@ if __name__ == "__main__":
     inputs.structure = structure
     inputs.potential = EmpiricalPotential(type=potential["pair_style"], data=potential["data"])
 
-    print(inputs.potential.get_potential_file())
+    """print(inputs.potential.get_potential_file())
     print(inputs.potential.atom_style)
-    print(inputs.potential.default_units)
+    print(inputs.potential.default_units)"""
 
     inputs.parameters = Dict(dict=parameters_opt)
 

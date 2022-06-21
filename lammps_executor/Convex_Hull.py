@@ -216,3 +216,22 @@ def extract_db(result, database_name, user, port, pass_word):
     cur.close()
     conn.close()
     return ene
+
+
+def plot_convex_hull(name, energy, element):
+    element_percents = []
+    for i in name:
+        ele1 = element.split("-")[0]
+        ele2 = element.split("-")[1]
+        elenum1 = int(i.split(ele1)[1].split(ele2)[0])
+        elenum2 = int(i.split(ele1)[1].split(ele2)[1])
+        ele_total = elenum1 + elenum2
+        ele1_percent = elenum1 / ele_total * 100
+        element_percents.append(ele1_percent)
+    plt.figure(figsize=(10, 6))
+    plt.scatter(element_percents, energy)
+    plt.xlabel(f"{ele1}%", fontsize=16)
+    plt.xticks(np.arange(0, 110, 10))
+    plt.ylabel("Energy", fontsize=16)
+    plt.title("Convex Hull", fontsize=20)
+    plt.savefig(f"Convex_Hull_{element}.png", bbox_size="tight")

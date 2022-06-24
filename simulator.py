@@ -1,7 +1,5 @@
 import os
 
-import yaml
-
 # from constant import api_key, pass_word, profile
 from aiida import load_profile
 
@@ -9,31 +7,14 @@ from data_wrapper import search_db
 
 # from Convex_Hull import extract_db, get_DFT_ene, get_structure_data, lammps_calculations, plot_convex_hull
 
-
-# ============================ Create Chemical space =====================================
-
-
-# TODO
-# 1- wrap data online  material project, open quantum, nomad
-
-# with open(os.path.join(workdir, 'configuration/Query.yml')) as fr:
-#     Query = yaml.safe_load(fr)
-
-
 MP_API_KEY = os.environ.get("MP_API_KEY")
 
-MP_API_KEY = ""
-print("****", MP_API_KEY)
 
 query = {"chemsys": "Mg-Al", "fields": ["material_id", "structure", "formation_energy_per_atom", "formula_pretty"]}
 docs = search_db.get_pd_db(query, "mp", key=MP_API_KEY)
 
 mpid_energy_dict = {doc.material_id: doc.formation_energy_per_atom for doc in docs}
 structures = [doc.structure for doc in docs]
-
-
-#
-# structures = [row["structure"] for _, row in data.iterrows()]
 
 
 print("formula:", structures[0].formula)

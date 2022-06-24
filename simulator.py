@@ -20,22 +20,20 @@ from data_wrapper import search_db
 #     Query = yaml.safe_load(fr)
 
 
-# MP_API_KEY = os.environ.get("MP_API_KEY_LEGACY")
+MP_API_KEY = os.environ.get("MP_API_KEY")
 
 MP_API_KEY = ""
 print("****", MP_API_KEY)
 
-Query = {"criteria": "{Mg}-Al"}
-data = search_db.get_pd_db(Query["criteria"], "mp", key=MP_API_KEY)
+query = {"chemsys": "Mg-Al", "fields": ["material_id", "structure", "formation_energy_per_atom", "formula_pretty"]}
+docs = search_db.get_pd_db(query, "mp", key=MP_API_KEY)
 
-print(data.columns)
+mpid_energy_dict = {doc.material_id: doc.formation_energy_per_atom for doc in docs}
+structures = [doc.structure for doc in docs]
 
-print(data.head())
 
-for index, row in data.iterrows():
-    print(row["full_formula"])
-
-structures = [row["structure"] for _, row in data.iterrows()]
+#
+# structures = [row["structure"] for _, row in data.iterrows()]
 
 
 print("formula:", structures[0].formula)
@@ -44,7 +42,6 @@ print("frac_coords:", structures[0].frac_coords)
 
 print("lattice:", structures[0].lattice)
 
-# print('positions:', structures[0].pos)
 
 print("num_sites:", structures[0].num_sites)
 

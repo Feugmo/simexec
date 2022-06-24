@@ -1,12 +1,12 @@
 import os
 
-import pandas as pd
-
 # from pymatgen.ext.matproj import MPRester
 # from mp_api import MPRester
 from mp_api.matproj import MPRester
 
 from utils.log import logger
+
+# import pandas as pd
 
 
 class MpWrapper:

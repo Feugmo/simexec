@@ -43,13 +43,6 @@ repos:
           # https://flake8.pycqa.org/en/latest/user/error-codes.html
           - "--ignore=E203,E266,E501,W503,F403,F401,E402"
 
-#  - repo: https://github.com/timothycrosley/isort
-#    rev: 5.10.1
-#    hooks:
-#      - id: isort
-#        additional_dependencies: [ toml ]
-#        exclude: ^.*/?setup\.py$
-
 # black
   - repo: https://github.com/ambv/black
     rev: 22.3.0
@@ -71,6 +64,14 @@ repos:
             build|
             dist"""
 #          language_version: python3.9
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        additional_dependencies: [ toml ]
+        exclude: ^.*/?setup\.py$
+
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.34.0

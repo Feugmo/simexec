@@ -24,6 +24,10 @@ repos:
     - id: check-yaml
     - id: end-of-file-fixer
     - id: trailing-whitespace
+    - id: debug-statements
+    - id: double-quote-string-fixer
+    - id: name-tests-test
+    - id: requirements-txt-fixer
 
 
 
@@ -79,7 +83,7 @@ repos:
     rev: v2.34.0
     hooks:
       - id: pyupgrade
-        args: [--py36-plus]
+        args: [--py38-plus]
 
   - repo: local
     hooks:

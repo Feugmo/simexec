@@ -5,7 +5,7 @@ from aiida import load_profile
 
 from data_wrapper import search_db
 
-# from Convex_Hull import extract_db, get_DFT_ene, get_structure_data, lammps_calculations, plot_convex_hull
+# from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
 
 MP_API_KEY = os.environ.get("MP_API_KEY")
 

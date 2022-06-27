@@ -1,4 +1,4 @@
-from lammps_executor import __version__
+from lammps import __version__
 
 
 def test_version():

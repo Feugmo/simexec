@@ -7,7 +7,7 @@ from data_wrapper import search_db
 
 # from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
 
-MP_API_KEY = os.environ.get("MP_API_KEY")
+MP_API_KEY = "GYaVRhBuv0WK7A47NKKvIxY8jufiyYwM"
 
 
 query = {"chemsys": "Mg-Al", "fields": ["material_id", "structure", "formation_energy_per_atom", "formula_pretty"]}

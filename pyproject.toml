@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lammps_executor"
+name = "SimExec"
 version = "0.2.0"
 description = ""
 authors = ["feugmo <giresse.feugmo@gmail.com>"]
@@ -17,7 +17,10 @@ psycopg2-binary = "2.8.6"
 loguru = "^0.6.0"
 mp-api = "^0.24.2"
 pre-commit = "^2.19.0"
-pymatgen = "^2022.5.26"
+pymatgen = "^2022.3.7"
+
+
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

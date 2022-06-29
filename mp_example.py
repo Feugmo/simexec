@@ -3,8 +3,7 @@ import os
 import pandas as pd
 from mp_api import MPRester
 
-MP_API_KEY = "GYaVRhBuv0WK7A47NKKvIxY8jufiyYwM"
-
+MP_API_KEY = os.environ.get("MP_API_KEY")
 
 mpr = MPRester(MP_API_KEY)
 # print(mpr.materials.available_fields)

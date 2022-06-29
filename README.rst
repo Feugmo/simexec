@@ -1,9 +1,9 @@
-lammps-executor
+SimExec
 =======
 
-package to automate lammps  calculation using  using aiida
+package to automate lammps or vasp  calculations using  using aiida
 
-This package rely on  https://github.com/aiidateam/aiida-core and  https://github.com/aiidaplugins/aiida-lammps
+This package rely on  https://github.com/aiidateam/aiida-core/ ,   https://github.com/aiidaplugins/aiida-lammps, and https://github.com/aiida-vasp/aiida-vasp
 
 
 Support and Documentation

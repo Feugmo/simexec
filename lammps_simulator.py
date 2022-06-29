@@ -7,8 +7,9 @@ from data_wrapper import search_db
 
 # from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
 
-MP_API_KEY = "GYaVRhBuv0WK7A47NKKvIxY8jufiyYwM"
 
+# 1 Query the structure on MP using compoistion
+MP_API_KEY = os.environ.get("MP_API_KEY")
 
 query = {"chemsys": "Mg-Al", "fields": ["material_id", "structure", "formation_energy_per_atom", "formula_pretty"]}
 docs = search_db.get_pd_db(query, "mp", key=MP_API_KEY)
@@ -16,27 +17,27 @@ docs = search_db.get_pd_db(query, "mp", key=MP_API_KEY)
 mpid_energy_dict = {doc.material_id: doc.formation_energy_per_atom for doc in docs}
 structures = [doc.structure for doc in docs]
 
+# print("formula:", structures[0].formula)
+#
+# print("frac_coords:", structures[0].frac_coords)
+#
+# print("lattice:", structures[0].lattice)
+#
+# print("num_sites:", structures[0].num_sites)
+#
+# print("species:", structures[0].species)
+#
+# print("list_of_element:", [s.name for s in structures[0].species])
+#
+# print("symbol_set:", structures[0].symbol_set)
+#
+# print("atomic_numbers:", structures[0].atomic_numbers)
+#
+# print("cart_coords:", structures[0].cart_coords)
+#
+# print("composition:", structures[0].composition)
 
-print("formula:", structures[0].formula)
-
-print("frac_coords:", structures[0].frac_coords)
-
-print("lattice:", structures[0].lattice)
-
-
-print("num_sites:", structures[0].num_sites)
-
-print("species:", structures[0].species)
-
-print("list_of_element:", [s.name for s in structures[0].species])
-
-print("symbol_set:", structures[0].symbol_set)
-
-print("atomic_numbers:", structures[0].atomic_numbers)
-
-print("cart_coords:", structures[0].cart_coords)
-
-print("composition:", structures[0].composition)
+# 2  run calculaion on lammps using aiida
 
 # load_profile()
 
@@ -50,3 +51,6 @@ print("composition:", structures[0].composition)
 #         energy = extract_db(result=res, database_name="material", user="lyuz11", port="5432", pass_word=pass_word)
 #         energys.append(energy)
 #     plot_convex_hull(element=Element, name=name, energy=energys)
+
+
+# 3 query the results on aiida database using  composition

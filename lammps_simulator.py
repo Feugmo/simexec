@@ -42,8 +42,9 @@ structures = [doc.structure for doc in docs]
 
 load_profile("lyuz11")
 
-pass_word = os.environ.get("password")
-user_name = os.environ.get("user_name_db")
+pass_word = os.environ.get("AIIDA_PASS_WORD")
+user_name = os.environ.get("AIIDA_USER")
+database_name = os.environ.get("AIIDA_DB")
 for structure in structures:
     cell = []
     for x in structure.lattice.matrix:
@@ -52,7 +53,11 @@ for structure in structures:
     composition = structure.composition
     element = [s.name for s in structure.species]
     result = lammps_calculations_v2(
-        positions=position, elements=element, matrix=cell, codename="lammps.optimize@localhost"
+        positions=position,
+        elements=element,
+        matrix=cell,
+        codename="lammps.optimize@localhost",
+        Potential_file="mg.liu.eam.alloy",
     )
     break
 # plot_convex_hull(element="Mg-Al", name=name, energy=energys)

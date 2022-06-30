@@ -98,7 +98,7 @@ def get_structure_data(api_key, id):
     return final
 
 
-def lammps_calculations_v1(sites, matrix, codename):
+def lammps_calculations_v1(sites, matrix, codename, Potential_file):
     results = []
     """
     Input:
@@ -126,7 +126,7 @@ def lammps_calculations_v1(sites, matrix, codename):
 
         structure.store()
 
-        with open("almg.liu.eam.alloy") as handle:
+        with open(Potential_file) as handle:
             eam_data = {"type": "alloy", "file_contents": handle.readlines()}
 
         potential = {"pair_style": "eam", "data": eam_data}
@@ -184,7 +184,7 @@ def lammps_calculations_v1(sites, matrix, codename):
     return results
 
 
-def lammps_calculations_v2(positions, elements, matrix, codename):
+def lammps_calculations_v2(positions, elements, matrix, codename, Potential_file):
     """
     This version only process one calculation at a time compare to v1, you need to
     put this into a for loop to get full result
@@ -208,7 +208,7 @@ def lammps_calculations_v2(positions, elements, matrix, codename):
 
     structure.store()
 
-    with open("almg.liu.eam.alloy") as handle:
+    with open(Potential_file) as handle:
         eam_data = {"type": "alloy", "file_contents": handle.readlines()}
 
     potential = {"pair_style": "eam", "data": eam_data}

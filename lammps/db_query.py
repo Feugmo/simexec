@@ -1,7 +1,9 @@
 import collections
 import math
 
+import pandas as pd
 import psycopg2.extras
+from pandas import DataFrame
 from psycopg2 import sql
 
 
@@ -196,6 +198,7 @@ class database_query:
         structures = []
         eles = []
         cells = []
+        formulas = []
         dbn = self.db_name
         user = self.user
         port = self.port
@@ -240,24 +243,31 @@ class database_query:
             energys.append(energy)
             structures.append(structure_info["sites"])
             cells.append(structure_info["cell"])
-            eles.append(structure_info["kinds"])
+
+            system = []
+            for i in structure_info["kinds"]:
+                system.append(i["symbols"][0])
+            eles.append(system)
+            symb = []
+            for ii in structure_info["sites"]:
+                symb.append(ii["kind_name"])
+            formulas.append(collections.Counter(symb))
         result["Elements"] = eles
+        result["Formula"] = formulas
         result["Energy"] = energys
         result["Cells"] = cells
         result["Sites"] = structures
-        return result
+        return DataFrame(result)
 
-    def energy_filter(self, e_min, e_max, **kwargs):
+    def energy_filter(self, **kwargs):
         result = kwargs.get("Result", None)
+        e_min = kwargs.get("e_min", None)
+        e_max = kwargs.get("e_max", None)
         if result is None:
             result = self.get_data()
-        result_filtered = {}
-        energy_filtered = []
-        cells_filtered = []
-        sites_filtered = []
-        formula_filtered = []
-        for e_id in range(len(result["Energy"])):
-            e_query = result["Energy"][e_id]
+        filtered_result = DataFrame()
+        for e_id in range(result.shape[0]):
+            e_query = result["Energy"].values[e_id]
             if e_min is None and e_max is None:
                 e_min = -math.inf
                 e_max = math.inf
@@ -266,36 +276,17 @@ class database_query:
             elif e_max is None:
                 e_max = e_min + 10
             if e_query > e_min and e_query < e_max:
-                energy_filtered.append(result["Energy"][e_id])
-                cells_filtered.append(result["Cells"][e_id])
-                sites_filtered.append(result["Sites"][e_id])
-                formula_filtered.append(result["Elements"][e_id])
-        result_filtered["Formula"] = formula_filtered
-        result_filtered["Energy"] = energy_filtered
-        result_filtered["Cells"] = cells_filtered
-        result_filtered["Sites"] = sites_filtered
+                filtered_result = pd.concat([filtered_result, DataFrame(result.iloc[id])], axis=1)
+        return filtered_result.T
 
     def element_filter(self, element, **kwargs):
         result = kwargs.get("Result", None)
         if result is None:
             result = self.get_data()
-        result_filtered = {}
-        energy_filtered = []
-        cells_filtered = []
-        sites_filtered = []
-        formula_filtered = []
+        filtered_result = DataFrame()
         elements = element.split("-")
-        for e_id in range(len(result["Energy"])):
-            system = []
-            for i in result["Elements"][0]:
-                system.append(i["symbols"][0])
+        for id in range(result.shape[0]):
+            system = result["Elements"].values[id]
             if set(elements).issubset(system):
-                energy_filtered.append(result["Energy"][e_id])
-                cells_filtered.append(result["Cells"][e_id])
-                sites_filtered.append(result["Sites"][e_id])
-                formula_filtered.append(result["Elements"][e_id])
-        result_filtered["Formula"] = formula_filtered
-        result_filtered["Energy"] = energy_filtered
-        result_filtered["Cells"] = cells_filtered
-        result_filtered["Sites"] = sites_filtered
-        return result_filtered
+                filtered_result = pd.concat([filtered_result, DataFrame(result.iloc[id])], axis=1)
+        return filtered_result.T

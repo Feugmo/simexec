@@ -3,6 +3,7 @@ import os
 # from constant import api_key, pass_word, profile
 from aiida import load_profile
 
+from Convex_Hull import lammps_calculations_v2
 from data_wrapper import search_db
 
 # from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
@@ -39,18 +40,26 @@ structures = [doc.structure for doc in docs]
 
 # 2  run calculaion on lammps using aiida
 
-# load_profile()
+load_profile("lyuz11")
 
+pass_word = os.environ.get("password")
+user_name = os.environ.get("user_name_db")
+for structure in structures:
+    cell = []
+    for x in structure.lattice.matrix:
+        cell.append(list(x))
+    position = structure.cart_coords
+    composition = structure.composition
+    element = [s.name for s in structure.species]
+    result = lammps_calculations_v2(
+        positions=position, elements=element, matrix=cell, codename="lammps.optimize@localhost"
+    )
+    break
+# plot_convex_hull(element="Mg-Al", name=name, energy=energys)
+from db_query import database_query
 
-# for structure in structures:
-#     Sites = ''
-#     cell = structures[0].lattice
-#     result = lammps_calculations(sites=Sites, matrix=cell, codename="Lammps-optmize@localhost")
-#     energys = []
-#     for res in result:
-#         energy = extract_db(result=res, database_name="material", user="lyuz11", port="5432", pass_word=pass_word)
-#         energys.append(energy)
-#     plot_convex_hull(element=Element, name=name, energy=energys)
-
+main_data = database_query(db_name="material", user=user_name, port="5432", pass_word=pass_word)
+print(main_data.element_filter("Mg-Al"))  # filter for element
+# main_data.energy_filter(e_min=-40,e_max=-20) #Energy filter
 
 # 3 query the results on aiida database using  composition

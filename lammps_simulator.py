@@ -65,7 +65,7 @@ for structure in structures:
 # main_data.energy_filter(e_min=-40,e_max=-20) #Energy filter
 
 # 3 query the results on aiida database using  composition
-from db_query import database_query
+from lammps.db_query import database_query
 
 main_data = database_query(db_name="material", user=user_name, port="5432", pass_word=pass_word)
 print(main_data.element_filter("Mg-Al"))  # filter for element

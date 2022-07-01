@@ -365,8 +365,9 @@ class database_query:
         e_max = kwargs.get("e_max", None)
         if result is None:
             result = self.get_data_js()
-        js_result = {}
+        js_results = {}
         for e_id in range(result.shape[0]):
+            js_result = {}
             e_query = result["Energy"].values[e_id]
             if e_min is None and e_max is None:
                 e_min = -math.inf
@@ -377,8 +378,9 @@ class database_query:
                 e_max = e_min + 10
             if e_query > e_min and e_query < e_max:
                 for i in range(result.shape[1]):
-                    js_result[result.columns[i]] = result.iloc[0][i]
-                js_str = json.dumps(js_result)
+                    js_result[result.columns[i]] = result.iloc[e_id][i]
+            js_results[f"Entry {e_id}"] = js_result
+        js_str = json.dumps(js_results)
         return js_str
 
     def element_filter(self, element, **kwargs):
@@ -395,14 +397,16 @@ class database_query:
 
     def element_filter_JS(self, element, **kwargs):
         result = kwargs.get("Result", None)
-        js_result = {}
+        js_results = {}
         if result is None:
             result = self.get_data_json()
         elements = element.split("-")
         for id in range(result.shape[0]):
+            js_result = {}
             system = result["Elements"].values[id]
             if set(elements).issubset(system):
                 for i in range(result.shape[1]):
-                    js_result[result.columns[i]] = result.iloc[0][i]
-                js_str = json.dumps(js_result)
+                    js_result[result.columns[i]] = result.iloc[id][i]
+            js_results[f"Entry {id}"] = js_result
+        js_str = json.dumps(js_results)
         return js_str

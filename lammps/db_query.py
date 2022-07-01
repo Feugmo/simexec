@@ -5,6 +5,7 @@ import pandas as pd
 import psycopg2.extras
 from pandas import DataFrame
 from psycopg2 import sql
+from pymatgen.core import Structure
 
 
 def db_query_element(database_name, user, port, pass_word, element_query, e_min, e_max):
@@ -24,6 +25,8 @@ def db_query_element(database_name, user, port, pass_word, element_query, e_min,
     structures = []
     cells = []
     sites_info = []
+    Es = []
+    Ps = []
     conn = psycopg2.connect(dbname=database_name, user=user, password=pass_word, host="127.0.0.1", port=port)
     cur = conn.cursor()
     cur.execute(
@@ -72,16 +75,20 @@ def db_query_element(database_name, user, port, pass_word, element_query, e_min,
                     energys.append(energy)
                     cells.append(j[0]["cell"])
                     symb = []
+                    P = []
                     for ii in j[0]["sites"]:
                         symb.append(ii["kind_name"])
+                        P.append(ii["position"])
                     formula = collections.Counter(symb)
+                    Es.append(symb)
+                    Ps.append(P)
                     structures.append(formula)
                     sites_info.append(j[0]["sites"])
 
     result["Formula"] = structures
     result["Cell"] = cells
-    result["Sites"] = sites_info
     result["Energy"] = energys
+    result["Sites"] = sites_info
 
     cur.close()
     conn.close()
@@ -241,17 +248,18 @@ class database_query:
             )
             structure_info = cur.fetchall()[0][0]
             energys.append(energy)
-            structures.append(structure_info["sites"])
             cells.append(structure_info["cell"])
-
             system = []
             for i in structure_info["kinds"]:
                 system.append(i["symbols"][0])
             eles.append(system)
             symb = []
+            P = []
             for ii in structure_info["sites"]:
                 symb.append(ii["kind_name"])
+                P.append(ii["position"])
             formulas.append(collections.Counter(symb))
+            structures.append(Structure(structure_info["cell"], symb, P))
         result["Elements"] = eles
         result["Formula"] = formulas
         result["Energy"] = energys

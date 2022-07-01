@@ -1,4 +1,5 @@
 import collections
+import json
 import math
 
 import pandas as pd
@@ -267,6 +268,77 @@ class database_query:
         result["Sites"] = structures
         return DataFrame(result)
 
+    def get_data_json(self):
+        result = {}
+        energys = []
+        eles = []
+        cells = []
+        formulas = []
+        PS = []
+        ES = []
+        dbn = self.db_name
+        user = self.user
+        port = self.port
+        pw = self.pass_word
+        conn = psycopg2.connect(dbname=dbn, user=user, password=pw, host="127.0.0.1", port=port)
+        cur = conn.cursor()
+        cur.execute(
+            """
+        SELECT output_id FROM db_dblink
+        WHERE label='results'
+        """
+        )
+        energy_id = cur.fetchall()
+        for e_id in energy_id:
+            cur.execute(
+                """
+            SELECT attributes FROM db_dbnode
+            WHERE id={}
+            """.format(
+                    e_id[0]
+                )
+            )
+            energy = cur.fetchall()[0][0]["energy"]
+            cur.execute(
+                """
+                SELECT input_id FROM db_dblink
+                WHERE output_id={} AND label='structure'
+                """.format(
+                    e_id[0] + 1
+                )
+            )
+            structure_id = cur.fetchall()[0][0]
+            cur.execute(
+                """
+            SELECT attributes FROM db_dbnode
+            WHERE id={}
+            """.format(
+                    structure_id
+                )
+            )
+            structure_info = cur.fetchall()[0][0]
+            energys.append(energy)
+            cells.append(structure_info["cell"])
+            system = []
+            for i in structure_info["kinds"]:
+                system.append(i["symbols"][0])
+            eles.append(system)
+            symb = []
+            P = []
+            for ii in structure_info["sites"]:
+                symb.append(ii["kind_name"])
+                P.append(ii["position"])
+            formulas.append(collections.Counter(symb))
+            PS.append(P)
+            ES.append(symb)
+        result["Elements"] = eles
+        result["Formula"] = formulas
+        result["Energy"] = energys
+        result["Cells"] = cells
+        result["Positions on Sites"] = PS
+        result["Elements on Sites"] = ES
+        return DataFrame(result)
+
     def energy_filter(self, **kwargs):
         result = kwargs.get("Result", None)
         e_min = kwargs.get("e_min", None)
@@ -287,6 +359,28 @@ class database_query:
                 filtered_result = pd.concat([filtered_result, DataFrame(result.iloc[id])], axis=1)
         return filtered_result.T
 
+    def energy_filter_JS(self, **kwargs):
+        result = kwargs.get("Result", None)
+        e_min = kwargs.get("e_min", None)
+        e_max = kwargs.get("e_max", None)
+        if result is None:
+            result = self.get_data_js()
+        js_result = {}
+        for e_id in range(result.shape[0]):
+            e_query = result["Energy"].values[e_id]
+            if e_min is None and e_max is None:
+                e_min = -math.inf
+                e_max = math.inf
+            elif e_min is None:
+                e_min = e_max - 10
+            elif e_max is None:
+                e_max = e_min + 10
+            if e_query > e_min and e_query < e_max:
+                for i in range(result.shape[1]):
+                    js_result[result.columns[i]] = result.iloc[0][i]
+                js_str = json.dumps(js_result)
+        return js_str
+
     def element_filter(self, element, **kwargs):
         result = kwargs.get("Result", None)
         if result is None:
@@ -298,3 +392,17 @@ class database_query:
             if set(elements).issubset(system):
                 filtered_result = pd.concat([filtered_result, DataFrame(result.iloc[id])], axis=1)
         return filtered_result.T
+
+    def element_filter_JS(self, element, **kwargs):
+        result = kwargs.get("Result", None)
+        js_result = {}
+        if result is None:
+            result = self.get_data_json()
+        elements = element.split("-")
+        for id in range(result.shape[0]):
+            system = result["Elements"].values[id]
+            if set(elements).issubset(system):
+                for i in range(result.shape[1]):
+                    js_result[result.columns[i]] = result.iloc[0][i]
+                js_str = json.dumps(js_result)
+        return js_str

@@ -1,13 +1,13 @@
+# from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
 import os
+from pathlib import Path
 
 # from constant import api_key, pass_word, profile
 from aiida import load_profile
 
 from Convex_Hull import lammps_calculations_v2
 from data_wrapper import search_db
-
-# from Convex_Hull import extract_db,  lammps_calculations, plot_convex_hull
-
+from utils.log import logger
 
 # 1 Query the structure on MP using compoistion
 MP_API_KEY = os.environ.get("MP_API_KEY")
@@ -18,33 +18,18 @@ docs = search_db.get_pd_db(query, "mp", key=MP_API_KEY)
 mpid_energy_dict = {doc.material_id: doc.formation_energy_per_atom for doc in docs}
 structures = [doc.structure for doc in docs]
 
-# print("formula:", structures[0].formula)
-#
-# print("frac_coords:", structures[0].frac_coords)
-#
-# print("lattice:", structures[0].lattice)
-#
-# print("num_sites:", structures[0].num_sites)
-#
-# print("species:", structures[0].species)
-#
-# print("list_of_element:", [s.name for s in structures[0].species])
-#
-# print("symbol_set:", structures[0].symbol_set)
-#
-# print("atomic_numbers:", structures[0].atomic_numbers)
-#
-# print("cart_coords:", structures[0].cart_coords)
-#
-# print("composition:", structures[0].composition)
-
-# 2  run calculaion on lammps using aiida
-
-load_profile("lyuz11")
+load_profile()
 
 pass_word = os.environ.get("AIIDA_PASS_WORD")
 user_name = os.environ.get("AIIDA_USER")
 database_name = os.environ.get("AIIDA_DB")
+
+pot_file = os.path.join(Path(__file__).parent, "lammps/potentials/almg.liu.eam.alloy")
+try:
+    assert os.path.isfile(pot_file)
+    logger.info(f" Found potenfial file : [{pot_file}]")
+except AssertionError:
+    logger.error(f" No such file: [{pot_file}]")
 for structure in structures:
     cell = []
     for x in structure.lattice.matrix:
@@ -53,11 +38,7 @@ for structure in structures:
     composition = structure.composition
     element = [s.name for s in structure.species]
     result = lammps_calculations_v2(
-        positions=position,
-        elements=element,
-        matrix=cell,
-        codename="lammps.optimize@localhost",
-        Potential_file="mg.liu.eam.alloy",
+        positions=position, elements=element, matrix=cell, codename="lammps.optimize@localhost", Potential_file=pot_file
     )
     break
 # plot_convex_hull(element="Mg-Al", name=name, energy=energys)

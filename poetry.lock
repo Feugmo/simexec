@@ -15,6 +15,9 @@ click = ">=8.1,<9.0"
 click-config-file = ">=0.6.0,<0.7.0"
 click-spinner = ">=0.1.8,<0.2.0"
 disk-objectstore = ">=0.6.0,<0.7.0"
+flask = {version = ">=2.0,<3.0", optional = true, markers = "extra == \"rest\""}
+flask-cors = {version = ">=3.0,<4.0", optional = true, markers = "extra == \"rest\""}
+flask-restful = {version = ">=0.3.7,<0.4.0", optional = true, markers = "extra == \"rest\""}
 graphviz = ">=0.13,<1.0"
 importlib-metadata = ">=4.3,<5.0"
 ipython = ">=7.20,<8.0"
@@ -28,8 +31,11 @@ pgsu = ">=0.2.1,<0.3.0"
 plumpy = ">=0.21.0,<0.22.0"
 psutil = ">=5.6,<6.0"
 psycopg2-binary = ">=2.8,<3.0"
+pyparsing = {version = ">=2.4,<3.0", optional = true, markers = "extra == \"rest\""}
+python-memcached = {version = ">=1.59,<2.0", optional = true, markers = "extra == \"rest\""}
 pytz = ">=2021.1,<2022.0"
 pyyaml = ">=5.4,<6.0"
+seekpath = {version = ">=1.9.3,<2.0", optional = true, markers = "extra == \"rest\""}
 sqlalchemy = ">=1.4.22,<1.5.0"
 tabulate = ">=0.8.5,<0.9.0"
 tqdm = ">=4.45,<5.0"
@@ -134,6 +140,17 @@ SQLAlchemy = ">=1.3.0"
 
 [package.extras]
 tz = ["python-dateutil"]
+
+[[package]]
+name = "aniso8601"
+version = "9.0.1"
+description = "A library for parsing ISO 8601 strings."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+dev = ["black", "coverage", "isort", "pre-commit", "pyenchant", "pylint"]
 
 [[package]]
 name = "anyio"
@@ -811,6 +828,35 @@ Werkzeug = ">=2.0"
 [package.extras]
 async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
+
+[[package]]
+name = "flask-cors"
+version = "3.0.10"
+description = "A Flask extension adding a decorator for CORS support"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = ">=0.9"
+Six = "*"
+
+[[package]]
+name = "flask-restful"
+version = "0.3.9"
+description = "Simple framework for creating REST APIs"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+aniso8601 = ">=0.82"
+Flask = ">=0.8"
+pytz = "*"
+six = ">=1.3.0"
+
+[package.extras]
+docs = ["sphinx"]
 
 [[package]]
 name = "flatten-dict"
@@ -2244,14 +2290,11 @@ test = ["flaky", "pretend", "pytest (>=3.0.1)"]
 
 [[package]]
 name = "pyparsing"
-version = "3.0.9"
-description = "pyparsing module - Classes and methods to define and execute parsing grammars"
+version = "2.4.7"
+description = "Python parsing module"
 category = "main"
 optional = false
-python-versions = ">=3.6.8"
-
-[package.extras]
-diagrams = ["railroad-diagrams", "jinja2"]
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "pyrsistent"
@@ -2293,6 +2336,17 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 
 [package.dependencies]
 six = ">=1.5"
+
+[[package]]
+name = "python-memcached"
+version = "1.59"
+description = "Pure python memcached client"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.4.0"
 
 [[package]]
 name = "pytray"
@@ -2496,6 +2550,25 @@ python-versions = ">=3.8,<3.11"
 
 [package.dependencies]
 numpy = ">=1.17.3,<1.25.0"
+
+[[package]]
+name = "seekpath"
+version = "1.9.7"
+description = "A module to obtain and visualize k-vector coefficients and obtain band paths in the Brillouin zone of crystal structures"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+future = ">=0.15"
+numpy = ">=1.0"
+spglib = ">=1.14.1"
+
+[package.extras]
+bz = ["scipy (>=0.17)"]
+click = ["click (>=6)"]
+dev = ["pre-commit (>=1.4)", "yapf (==0.29.0)", "prospector (>=0.12.7)", "pylint (>=1.8)"]
+webservice = ["Flask (>=0.12.3)", "qe-tools (>=1.1.4)", "ase (>=3.15.0,<3.18)", "pymatgen (>=2017.7,<2019.1)", "monty (<=2.0.4)", "ase (>=3.18.0)", "pymatgen (>=2017.7)"]
 
 [[package]]
 name = "send2trash"
@@ -3076,7 +3149,7 @@ test = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "f5ba4d197fc51c78080a8a2e3059caba9a19ad9f7a0a69542b58063fc6eaf2f8"
+content-hash = "5e1d8fb2e258cc221eab412298e0f9f2ad632d81d77d49c76804e9c050c8c2c9"
 
 [metadata.files]
 aiida-core = [
@@ -3099,6 +3172,10 @@ aiormq = [
 alembic = [
     {file = "alembic-1.8.0-py3-none-any.whl", hash = "sha256:b5ae4bbfc7d1302ed413989d39474d102e7cfa158f6d5969d2497955ffe85a30"},
     {file = "alembic-1.8.0.tar.gz", hash = "sha256:a2d4d90da70b30e70352cd9455e35873a255a31402a438fe24815758d7a0e5e1"},
+]
+aniso8601 = [
+    {file = "aniso8601-9.0.1-py2.py3-none-any.whl", hash = "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f"},
+    {file = "aniso8601-9.0.1.tar.gz", hash = "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"},
 ]
 anyio = [
     {file = "anyio-3.6.1-py3-none-any.whl", hash = "sha256:cb29b9c70620506a9a8f87a309591713446953302d7d995344d0d7c6c0c9a7be"},
@@ -3437,6 +3514,14 @@ flake8 = [
 flask = [
     {file = "Flask-2.1.2-py3-none-any.whl", hash = "sha256:fad5b446feb0d6db6aec0c3184d16a8c1f6c3e464b511649c8918a9be100b4fe"},
     {file = "Flask-2.1.2.tar.gz", hash = "sha256:315ded2ddf8a6281567edb27393010fe3406188bafbfe65a3339d5787d89e477"},
+]
+flask-cors = [
+    {file = "Flask-Cors-3.0.10.tar.gz", hash = "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"},
+    {file = "Flask_Cors-3.0.10-py2.py3-none-any.whl", hash = "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438"},
+]
+flask-restful = [
+    {file = "Flask-RESTful-0.3.9.tar.gz", hash = "sha256:ccec650b835d48192138c85329ae03735e6ced58e9b2d9c2146d6c84c06fa53e"},
+    {file = "Flask_RESTful-0.3.9-py2.py3-none-any.whl", hash = "sha256:4970c49b6488e46c520b325f54833374dc2b98e211f1b272bd4b0c516232afe2"},
 ]
 flatten-dict = [
     {file = "flatten-dict-0.4.2.tar.gz", hash = "sha256:506a96b6e6f805b81ae46a0f9f31290beb5fa79ded9d80dbe1b7fa236ab43076"},
@@ -4441,8 +4526,8 @@ pyopenssl = [
     {file = "pyOpenSSL-22.0.0.tar.gz", hash = "sha256:660b1b1425aac4a1bea1d94168a85d99f0b3144c869dd4390d27629d0087f1bf"},
 ]
 pyparsing = [
-    {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
-    {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
+    {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
+    {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pyrsistent = [
     {file = "pyrsistent-0.18.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:df46c854f490f81210870e509818b729db4488e1f30f2a1ce1698b2295a878d1"},
@@ -4474,6 +4559,10 @@ pytest = [
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
+]
+python-memcached = [
+    {file = "python-memcached-1.59.tar.gz", hash = "sha256:a2e28637be13ee0bf1a8b6843e7490f9456fd3f2a4cb60471733c7b5d5557e4f"},
+    {file = "python_memcached-1.59-py2.py3-none-any.whl", hash = "sha256:4dac64916871bd3550263323fc2ce18e1e439080a2d5670c594cf3118d99b594"},
 ]
 pytray = [
     {file = "pytray-0.3.2-py2.py3-none-any.whl", hash = "sha256:f60537faab1466ddf97e131aa8c75d04c3e714ff566eb70cb36d8a1a585ea93d"},
@@ -4685,6 +4774,10 @@ scipy = [
     {file = "scipy-1.8.1-cp39-cp39-win32.whl", hash = "sha256:1166514aa3bbf04cb5941027c6e294a000bba0cf00f5cdac6c77f2dad479b434"},
     {file = "scipy-1.8.1-cp39-cp39-win_amd64.whl", hash = "sha256:9dd4012ac599a1e7eb63c114d1eee1bcfc6dc75a29b589ff0ad0bb3d9412034f"},
     {file = "scipy-1.8.1.tar.gz", hash = "sha256:9e3fb1b0e896f14a85aa9a28d5f755daaeeb54c897b746df7a55ccb02b340f33"},
+]
+seekpath = [
+    {file = "seekpath-1.9.7-py2.py3-none-any.whl", hash = "sha256:b080ecba79cad3a64b89035c042090d248e1eb36a1e260648a325f7f8099e214"},
+    {file = "seekpath-1.9.7.tar.gz", hash = "sha256:b83ea23b54209b7f34f3fcabe7248cebbcc3cc164c394f1659b35942edaedb1c"},
 ]
 send2trash = [
     {file = "Send2Trash-1.8.0-py3-none-any.whl", hash = "sha256:f20eaadfdb517eaca5ce077640cb261c7d2698385a6a0f072a4a5447fd49fa08"},

@@ -5,6 +5,7 @@ from mp_api import MPRester
 
 MP_API_KEY = os.environ.get("MP_API_KEY")
 
+print(MP_API_KEY)
 mpr = MPRester(MP_API_KEY)
 # print(mpr.materials.available_fields)
 
@@ -74,10 +75,10 @@ with MPRester(MP_API_KEY) as mpr:
 
 example_doc = docs[0]
 
-print("mpid", example_doc.material_id)  # a Materials Project ID
-print("formula", example_doc.formula_pretty)  # a formula
-print("formation_energy_per_atom", example_doc.formation_energy_per_atom)  # a volume
+# print("mpid", example_doc.material_id)  # a Materials Project ID
+# print("formula", example_doc.formula_pretty)  # a formula
+# print("formation_energy_per_atom", example_doc.formation_energy_per_atom)  # a volume
 
 print("structure", example_doc.structure)
 
-print(mpid_energy_dict)
+# print(mpid_energy_dict)

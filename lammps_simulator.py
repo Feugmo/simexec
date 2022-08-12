@@ -24,6 +24,8 @@ pass_word = os.environ.get("AIIDA_PASS_WORD")
 user_name = os.environ.get("AIIDA_USER")
 database_name = os.environ.get("AIIDA_DB")
 
+
+print(pass_word, user_name, database_name)
 pot_file = os.path.join(Path(__file__).parent, "lammps/potentials/almg.liu.eam.alloy")
 try:
     assert os.path.isfile(pot_file)

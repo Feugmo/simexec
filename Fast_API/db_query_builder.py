@@ -42,20 +42,25 @@ class db_query:
             ele_num[ele] = []
         for structure, energy, calcu in zip(whole_data[0], whole_data[1], whole_data[2]):
             if set(elements).issubset(set(structure[0].get_kind_names())):
+                UUID = structure[0].uuid
                 y = structure[0].get_composition()
+                structure = structure[0].get_pymatgen()
                 for i in y:
                     try:
                         ele_num[i].append(y[i])
                     except KeyError:
                         ele_num[i] = [y[i]]
                 item = {}
-                item["Cell"] = str(structure[0].cell)
-                item["Formula"] = structure[0].get_formula()
+                item["Space_G"] = str(structure.get_space_group_info())
+                item["Formula"] = structure.formula()
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
-                item["UUID"] = structure[0].uuid
+                item["UUID"] = UUID
                 item["Energy"] = round(energy[0].attributes["energy"], 3)
                 items.append(item)
-                energys.append(round(energy[0].attributes["energy"], 3))
+                try:
+                    energys.append(round(energy[0].attributes["energy"], 3))
+                except KeyError:
+                    energys.append(round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3))
         ratios = {"ratio": []}
 
         for r in range(len(ele_num[elements[0]])):
@@ -95,10 +100,10 @@ class db_query:
             try:
                 e_query = round(energy[0].attributes["energy"], 3)
             except KeyError:
-                e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"])
+                e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3)
             if e_query > e_min and e_query < e_max:
                 item = {}
-                item["Cell"] = str(structure[0].cell)
+                item["Space_G"] = str(structure[0].get_pymatgen().get_space_group_info())
                 item["Formula"] = structure[0].get_formula()
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
                 item["UUID"] = structure[0].uuid

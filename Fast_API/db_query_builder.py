@@ -46,7 +46,7 @@ class db_query:
                 for i in y:
                     try:
                         ele_num[i].append(y[i])
-                    except ValueError:
+                    except KeyError:
                         ele_num[i] = [y[i]]
                 item = {}
                 item["Cell"] = str(structure[0].cell)
@@ -92,14 +92,17 @@ class db_query:
                 e_min = e_max - 10
             elif e_max is None:
                 e_max = e_min + 10
-            e_query = round(energy[0].attributes["energy"], 3)
+            try:
+                e_query = round(energy[0].attributes["energy"], 3)
+            except KeyError:
+                e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"])
             if e_query > e_min and e_query < e_max:
                 item = {}
                 item["Cell"] = str(structure[0].cell)
                 item["Formula"] = structure[0].get_formula()
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
                 item["UUID"] = structure[0].uuid
-                item["Energy"] = round(energy[0].attributes["energy"], 3)
+                item["Energy"] = e_query
                 items.append(item)
         return json.dumps(items)
 

@@ -1,5 +1,6 @@
 import json
 import math
+from weakref import KeyedRef
 
 from aiida import load_profile
 from aiida.orm import CalcJobNode, Dict, QueryBuilder, StructureData, load_node
@@ -52,7 +53,7 @@ class db_query:
                         ele_num[i] = [y[i]]
                 item = {}
                 item["Space_G"] = str(structure.get_space_group_info())
-                item["Formula"] = structure.formula()
+                item["Formula"] = structure.formula
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
                 item["UUID"] = UUID
                 item["Energy"] = round(energy[0].attributes["energy"], 3)
@@ -126,29 +127,29 @@ class db_query:
         cal_nodes = qb.all()
         items = []
         # 3 Process Types
-        Kill = 0
-        Finished = 0
-        Create = 0
+        status = {}
         cal_type_list = []
+        users = []
         for calcu in cal_nodes:
             item = {}
             calculation_type = str(calcu[0].process_type.split(":")[1])
             process_type = str(calcu[0].process_state).split(".")[1]
+            user = str(calcu[0].computer).split(",")[0]
             item["Cal_Type"] = calculation_type
             item["Time"] = str(calcu[0].ctime.strftime("%m/%d/%y %H:%M"))
             item["Status"] = process_type
-            item["Computer"] = str(calcu[0].computer).split(",")[0]
+            item["Computer"] = user
             if calculation_type not in cal_type_list:
                 cal_type_list.append(calculation_type)
-            if process_type == "KILLED":
-                Kill += 1
-            elif process_type == "CREATED":
-                Create += 1
-            else:
-                Finished += 1
+            if user not in users:
+                users.append(user)
+            try:
+                status[process_type] += 1
+            except KeyError:
+                status[process_type] = 1
             item["UUID"] = str(calcu[0].uuid)
             items.append(item)
-        return [json.dumps(items), json.dumps({"data_num": [Kill, Finished, Create], "Types": cal_type_list})]
+        return [json.dumps(items), json.dumps({"data_num": status, "Types": cal_type_list, "User": users})]
 
     def UUID_Detailed_Info(self, calc_nodes):
         load_profile()

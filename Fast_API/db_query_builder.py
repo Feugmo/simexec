@@ -149,7 +149,12 @@ class db_query:
                 status[process_type] = 1
             item["UUID"] = str(calcu[0].uuid)
             items.append(item)
-        return [json.dumps(items), json.dumps({"data_num": status, "Types": cal_type_list, "User": users})]
+        return [
+            json.dumps(items),
+            json.dumps(
+                {"Status": list(status), "Status_num": list(status.values()), "Types": cal_type_list, "User": users}
+            ),
+        ]
 
     def UUID_Detailed_Info(self, calc_nodes):
         load_profile()

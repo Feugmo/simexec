@@ -162,17 +162,23 @@ class db_query:
         structure_node = load_node(calc_node.inputs.structure.uuid).get_pymatgen_structure()
         # result_node=load_node(calc_node.outputs.results.uuid)
         item = {}
+        item_gen = {}
+        item_str = {}
         # item['Cell']=str(structure_node.cell)
-        item["space_group"] = str(structure_node.get_space_group_info())
+        item_str["space_group"] = str(structure_node.get_space_group_info())
         item["Formula"] = str(structure_node.formula)
-        item["Cal_Type"] = str(calc_node.process_type.split(":")[1])
-        item["Molecules"] = str(structure_node.num_sites)
-        item["Chem_System"] = str(structure_node.composition.chemical_system)
+        item_gen["Cal_Type"] = str(calc_node.process_type.split(":")[1])
+        item_str["Molecules"] = str(structure_node.num_sites)
+        item_str["Chem_System"] = str(structure_node.composition.chemical_system)
         # item['Energy']=round(result_node.attributes['energy'],3)
-        item["Computer"] = str(calc_node.computer).split(",")[0]
-        item["Time"] = str(calc_node.ctime.strftime("%m/%d/%y %H:%M"))  # Start Time
-        item["WorkDir"] = str(calc_node.get_remote_workdir())
-        item["Ftime"] = str(calc_node.mtime.strftime("%m/%d/%y %H:%M"))
+        item_gen["Computer"] = str(calc_node.computer).split(",")[0]
+        item_gen["Time"] = str(calc_node.ctime.strftime("%m/%d/%y %H:%M"))  # Start Time
+        item_gen["WorkDir"] = str(calc_node.get_remote_workdir())
+        item_gen["Ftime"] = str(calc_node.mtime.strftime("%m/%d/%y %H:%M"))
+        item_str["Density"] = str(structure_node.density)
+        item_str["Volume"] = str(structure_node.volume)
+        item["StructureInfo"] = item_str
+        item["GeneralInfo"] = item_gen
         g = Graph(node_id_type="uuid")
         g.recurse_descendants(
             calc_nodes,

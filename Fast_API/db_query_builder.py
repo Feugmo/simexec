@@ -170,7 +170,9 @@ class db_query:
         item["Chem_System"] = str(structure_node.composition.chemical_system)
         # item['Energy']=round(result_node.attributes['energy'],3)
         item["Computer"] = str(calc_node.computer).split(",")[0]
-        item["Time"] = str(calc_node.ctime.strftime("%m/%d/%y %H:%M"))
+        item["Time"] = str(calc_node.ctime.strftime("%m/%d/%y %H:%M"))  # Start Time
+        item["WorkDir"] = str(calc_node.get_remote_workdir())
+        item["Ftime"] = str(calc_node.mtime.strftime("%m/%d/%y %H:%M"))
         g = Graph(node_id_type="uuid")
         g.recurse_descendants(
             calc_nodes,

@@ -175,8 +175,8 @@ class db_query:
         item_gen["Time"] = str(calc_node.ctime.strftime("%m/%d/%y %H:%M"))  # Start Time
         item_gen["WorkDir"] = str(calc_node.get_remote_workdir())
         item_gen["Ftime"] = str(calc_node.mtime.strftime("%m/%d/%y %H:%M"))
-        item_str["Density"] = str(structure_node.density)
-        item_str["Volume"] = str(structure_node.volume)
+        item_str["Density"] = str(round(structure_node.density, 1))
+        item_str["Volume"] = str(round(structure_node.volume, 1))
         item["StructureInfo"] = item_str
         item["GeneralInfo"] = item_gen
         g = Graph(node_id_type="uuid")

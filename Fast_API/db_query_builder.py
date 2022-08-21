@@ -43,7 +43,7 @@ class db_query:
             ele_num[ele] = []
         for structure, energy, calcu in zip(whole_data[0], whole_data[1], whole_data[2]):
             if set(elements).issubset(set(structure[0].get_kind_names())):
-                UUID = structure[0].uuid
+
                 y = structure[0].get_composition()
                 structure = structure[0].get_pymatgen()
                 for i in y:
@@ -55,7 +55,7 @@ class db_query:
                 item["Space_G"] = str(structure.get_space_group_info())
                 item["Formula"] = structure.formula
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
-                item["UUID"] = UUID
+                item["UUID"] = str(calcu[0].uuid)
                 item["Energy"] = round(energy[0].attributes["energy"], 3)
                 items.append(item)
                 try:
@@ -107,7 +107,7 @@ class db_query:
                 item["Space_G"] = str(structure[0].get_pymatgen().get_space_group_info())
                 item["Formula"] = structure[0].get_formula()
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
-                item["UUID"] = structure[0].uuid
+                item["UUID"] = str(calcu[0].uuid)
                 item["Energy"] = e_query
                 items.append(item)
         return json.dumps(items)
@@ -160,7 +160,10 @@ class db_query:
         load_profile()
         calc_node = load_node(calc_nodes)
         structure_node = load_node(calc_node.inputs.structure.uuid).get_pymatgen_structure()
-        # result_node=load_node(calc_node.outputs.results.uuid)
+        try:
+            result_node = load_node(calc_node.outputs.results.uuid)
+        except AttributeError:
+            result_node = calc_node.outputs.misc
         item = {}
         item_gen = {}
         item_str = {}
@@ -177,6 +180,20 @@ class db_query:
         item_gen["Ftime"] = str(calc_node.mtime.strftime("%m/%d/%y %H:%M"))
         item_str["Density"] = str(round(structure_node.density, 1))
         item_str["Volume"] = str(round(structure_node.volume, 1))
+        final_value = []
+        try:
+            item["Result_key"] = list(result_node.attributes)
+            result_values = list(result_node.attributes.values())
+        except KeyError:
+            item["Result_key"] = list(result_node.get_dict())
+
+            result_values = list(result_node.get_dict().values())
+        for v in result_values:
+            try:
+                final_value.append(list(v.items()))
+            except AttributeError:
+                final_value.append(v)
+        item["Result_value"] = final_value
         item["StructureInfo"] = item_str
         item["GeneralInfo"] = item_gen
         g = Graph(node_id_type="uuid")

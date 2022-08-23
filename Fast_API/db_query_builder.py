@@ -42,15 +42,9 @@ class db_query:
         for ele in elements:
             ele_num[ele] = []
         for structure, energy, calcu in zip(whole_data[0], whole_data[1], whole_data[2]):
-            if set(elements).issubset(set(structure[0].get_kind_names())):
 
-                y = structure[0].get_composition()
+            if element == "All":
                 structure = structure[0].get_pymatgen()
-                for i in y:
-                    try:
-                        ele_num[i].append(y[i])
-                    except KeyError:
-                        ele_num[i] = [y[i]]
                 item = {}
                 item["Space_G"] = str(structure.get_space_group_info())
                 item["Formula"] = structure.formula
@@ -62,20 +56,41 @@ class db_query:
                     e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3)
                 item["Energy"] = e_query
                 items.append(item)
-                try:
-                    energys.append(round(energy[0].attributes["energy"], 3))
-                except KeyError:
-                    energys.append(round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3))
-        ratios = {"ratio": []}
-        for r in range(len(ele_num[elements[0]])):
-            ratios["ratio"].append(
-                [
-                    ele_num[list(ele_num.keys())[0]][r]
-                    / (ele_num[list(ele_num.keys())[1]][r] + ele_num[list(ele_num.keys())[0]][r]),
-                    energys[r],
-                ]
-            )
-            ratios["type"] = [ele_num[list(ele_num.keys())[0]], ele_num[list(ele_num.keys())[1]]]
+            else:
+                if set(elements).issubset(set(structure[0].get_kind_names())):
+
+                    y = structure[0].get_composition()
+                    structure = structure[0].get_pymatgen()
+                    for i in y:
+                        try:
+                            ele_num[i].append(y[i])
+                        except KeyError:
+                            ele_num[i] = [y[i]]
+                    item = {}
+                    item["Space_G"] = str(structure.get_space_group_info())
+                    item["Formula"] = structure.formula
+                    item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
+                    item["UUID"] = str(calcu[0].uuid)
+                    try:
+                        e_query = round(energy[0].attributes["energy"], 3)
+                    except KeyError:
+                        e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3)
+                    item["Energy"] = e_query
+                    items.append(item)
+                    try:
+                        energys.append(round(energy[0].attributes["energy"], 3))
+                    except KeyError:
+                        energys.append(round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3))
+            ratios = {"ratio": []}
+            for r in range(len(ele_num[elements[0]])):
+                ratios["ratio"].append(
+                    [
+                        ele_num[list(ele_num.keys())[0]][r]
+                        / (ele_num[list(ele_num.keys())[1]][r] + ele_num[list(ele_num.keys())[0]][r]),
+                        energys[r],
+                    ]
+                )
+                ratios["type"] = [ele_num[list(ele_num.keys())[0]], ele_num[list(ele_num.keys())[1]]]
 
         return [json.dumps(items), json.dumps(ratios), json.dumps(ele_num)]
 

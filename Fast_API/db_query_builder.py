@@ -82,15 +82,30 @@ class db_query:
                     except KeyError:
                         energys.append(round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3))
             ratios = {"ratio": []}
+            # Try to solve the problem regarding if compounment only has one kind of element, the following will not be compatible with compound over
             for r in range(len(ele_num[elements[0]])):
-                ratios["ratio"].append(
-                    [
-                        ele_num[list(ele_num.keys())[0]][r]
-                        / (ele_num[list(ele_num.keys())[1]][r] + ele_num[list(ele_num.keys())[0]][r]),
-                        energys[r],
-                    ]
-                )
-                ratios["type"] = [ele_num[list(ele_num.keys())[0]], ele_num[list(ele_num.keys())[1]]]
+                """type: is the molecule count for each element, the reason for doing this is to avoid confusion on element order e.g,
+                first calculated may be Mg but on the list it may be "Al" considering a method to remove that constraint"""
+                try:
+                    E_ratio = ele_num[list(ele_num.keys())[0]][r] / (
+                        ele_num[list(ele_num.keys())[1]][r] + ele_num[list(ele_num.keys())[0]][r]
+                    )
+                    ratios["ratio"].append(
+                        [
+                            E_ratio,
+                            energys[r],
+                        ]
+                    )
+                    ratios["type"] = [ele_num[list(ele_num.keys())[0]], ele_num[list(ele_num.keys())[1]]]
+                except IndexError:
+                    E_ratio = 1
+                    ratios["ratio"].append(
+                        [
+                            E_ratio,
+                            energys[r],
+                        ]
+                    )
+                ratios["type"] = [ele_num[list(ele_num.keys())[0]]]
 
         return [json.dumps(items), json.dumps(ratios), json.dumps(ele_num)]
 

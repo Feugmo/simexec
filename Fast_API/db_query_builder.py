@@ -56,14 +56,17 @@ class db_query:
                 item["Formula"] = structure.formula
                 item["Cal_Type"] = str(calcu[0].process_type.split(":")[1])
                 item["UUID"] = str(calcu[0].uuid)
-                item["Energy"] = round(energy[0].attributes["energy"], 3)
+                try:
+                    e_query = round(energy[0].attributes["energy"], 3)
+                except KeyError:
+                    e_query = round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3)
+                item["Energy"] = e_query
                 items.append(item)
                 try:
                     energys.append(round(energy[0].attributes["energy"], 3))
                 except KeyError:
                     energys.append(round(energy[0].get_dict()["total_energies"]["energy_extrapolated"], 3))
         ratios = {"ratio": []}
-
         for r in range(len(ele_num[elements[0]])):
             ratios["ratio"].append(
                 [
@@ -196,10 +199,14 @@ class db_query:
         item["Result_value"] = final_value
         item["StructureInfo"] = item_str
         item["GeneralInfo"] = item_gen
+
+        return json.dumps(item)
+
+    def process_plot_gen(self, uuid):
         g = Graph(node_id_type="uuid")
         g.recurse_descendants(
-            calc_nodes,
+            uuid,
         )
-        g.recurse_ancestors(calc_nodes)
-        g.graphviz.render(format="png", directory="graph", filename=calc_nodes).replace("\\", "/")
-        return json.dumps(item)
+        g.recurse_ancestors(uuid)
+        g.graphviz.render(format="png", directory="graph", filename=uuid).replace("\\", "/")
+        print("Graph Generated")

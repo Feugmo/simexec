@@ -1,3 +1,5 @@
+import time
+
 from aiida import load_profile
 from aiida.plugins import DataFactory
 from db_query_builder import db_query
@@ -29,7 +31,7 @@ def filter_element(element: str):
     return db_query().element_filter(element=element)[0]
 
 
-# # Convex Hull Data
+# Convex Hull Data
 # @app.get("/get/filtered/element/{element}/count")
 # def filter_element(element: str):
 #     return db_query().element_filter(element=element)[1]
@@ -55,5 +57,7 @@ def get_detailed_based_UUID(calcu_node: str):
 
 @app.get("/get/UUID/cal_graph_pic/{cnode}")
 async def get_img(cnode: str):
+    db_query().process_plot_gen(cnode)
+    time.sleep(2)
     img_path = f"graph/{cnode}.png"
     return FileResponse(img_path)

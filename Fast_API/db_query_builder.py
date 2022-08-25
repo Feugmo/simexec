@@ -214,21 +214,26 @@ class db_query:
         item_str["Density"] = str(round(structure_node.density, 1))
         item_str["Volume"] = str(round(structure_node.volume, 1))
         final_value = []
+        final_key = []
         try:
-            item["Result_key"] = list(result_node.attributes)
-            result_values = list(result_node.attributes.values())
-        except KeyError:
-            item["Result_key"] = list(result_node.get_dict())
+            result_det = result_node.attributes
 
-            result_values = list(result_node.get_dict().values())
-        for v in result_values:
-            try:
-                final_value.append(list(v.items()))
-            except AttributeError:
-                final_value.append(v)
+        except KeyError:
+            result_det = list(result_node.get_dict())
+
+        for det in result_det:
+            if type(result_det[det]) == dict:
+                final_key += list(result_det[det])
+                final_value += [str(i) for i in result_det[det].values()]
+            else:
+                final_key.append(det)
+                final_value.append(str(result_det[det]))
+
+        item["Result_key"] = final_key
         item["Result_value"] = final_value
         item["StructureInfo"] = item_str
         item["GeneralInfo"] = item_gen
+        item["Retrived_list"] = calc_node.outputs.retrieved.base.repository.list_object_names()
 
         return json.dumps(item)
 
